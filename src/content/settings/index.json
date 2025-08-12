@@ -1,0 +1,34 @@
+{
+  "title": "Daniel Adrian's site",
+  "description": "A space to explore ideas and share what I'm learning",
+  "author": "Daniel Adrian",
+  "defaultImageAlt": "Daniel Adrian's site",
+  "scheduledPostMargin": 0,
+  "twitterCard": "summary_large_image",
+  "socials": [
+    {
+      "icon": "github",
+      "label": "GitHub",
+      "url": "https://github.com/truedaniyyel",
+      "handle": "truedaniyyel"
+    },
+    {
+      "icon": "twitter",
+      "label": "Twitter",
+      "url": "https://twitter.com/truedaniyyel",
+      "handle": "@truedaniyyel"
+    },
+    {
+      "icon": "facebook",
+      "label": "Facebook",
+      "url": "https://www.facebook.com/truedaniyyel",
+      "handle": "truedaniyyel"
+    },
+    {
+      "icon": "linkedin",
+      "label": "LinkedIn",
+      "url": "https://linkedin.com/in/truedaniyyel",
+      "handle": "truedaniyyel"
+    }
+  ]
+}
