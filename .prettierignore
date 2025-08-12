@@ -1,0 +1,41 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+.astro/
+coverage/
+
+# Deployment-specific directories
+.github
+.netlify
+.vercel
+.wrangler/
+
+# Static assets that don't need formatting
+public/
+
+# Lockfiles
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Files that are formatted by Biome
+**/*.json
+**/*.js
+**/*.ts
+**/*.tsx
+**/*.jsx
+**/*.mjs
+**/*.cjs
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example

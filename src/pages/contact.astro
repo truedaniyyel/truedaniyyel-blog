@@ -1,0 +1,37 @@
+---
+export const prerender = false;
+
+import { server } from '../actions';
+
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+---
+
+<html lang="en">
+	<head>
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+	</head>
+	<body class="prose mx-auto p-6">
+		<h1>Contact</h1>
+
+		<form method="POST" action={server.contact} class="grid gap-4">
+			<label>
+				Name
+				<input name="name" required class="input" />
+			</label>
+
+			<label>
+				Email
+				<input type="email" name="email" required class="input" />
+			</label>
+
+			<label>
+				Message
+				<textarea name="message" required class="textarea"></textarea>
+			</label>
+
+			<div class="cf-turnstile" data-sitekey={siteKey}></div>
+
+			<button type="submit" class="btn">Send</button>
+		</form>
+	</body>
+</html>
