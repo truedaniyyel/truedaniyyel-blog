@@ -1,0 +1,80 @@
+{
+  "header": [
+    {
+      "name": "Blog",
+      "url": "/blog"
+    },
+    {
+      "name": "Projects",
+      "url": "/projects"
+    },
+    {
+      "name": "Art",
+      "url": "/art"
+    },
+    {
+      "name": "Shop",
+      "url": "/shop"
+    },
+    {
+      "name": "About",
+      "url": "/about"
+    },
+    {
+      "name": "Contact",
+      "url": "/contact"
+    },
+    {
+      "name": "Newsletter",
+      "url": "/newsletter"
+    }
+  ],
+  "footer": [
+    {
+      "title": "Content",
+      "links": [
+        {
+          "name": "Blog",
+          "url": "/blog"
+        },
+        {
+          "name": "Projects",
+          "url": "/projects"
+        },
+        {
+          "name": "Art",
+          "url": "/art"
+        }
+      ]
+    },
+    {
+      "title": "Resources",
+      "links": [
+        {
+          "name": "Search",
+          "url": "/search"
+        },
+        {
+          "name": "RSS",
+          "url": "/rss.xml"
+        },
+        {
+          "name": "Sitemap",
+          "url": "/sitemap-index.xml"
+        },
+        {
+          "name": "Shop",
+          "url": "/shop"
+        },
+        {
+          "name": "Contact",
+          "url": "/contact"
+        },
+        {
+          "name": "Socials",
+          "url": "/socials"
+        }
+      ]
+    }
+  ]
+}
