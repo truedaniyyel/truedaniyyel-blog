@@ -8,14 +8,13 @@ import keystatic from '@keystatic/astro';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
 import expressiveCode from 'astro-expressive-code';
+import icon from 'astro-icon';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://astro.build/config
 export default defineConfig({
-	output: 'server',
-
 	vite: {
 		plugins: [
 			tailwindcss(),
@@ -34,7 +33,7 @@ export default defineConfig({
 		},
 	}),
 
-	integrations: [expressiveCode(), svelte(), mdx(), sitemap(), react(), keystatic()],
+	integrations: [expressiveCode(), svelte(), mdx(), sitemap(), react(), keystatic(), icon()],
 
 	markdown: {
 		rehypePlugins: [

@@ -58,7 +58,7 @@ const baseSchema = () => ({
 export default config({
 	storage: {
 		kind: 'github',
-		repo: 'truedaniyyel/truedaniyyel',
+		repo: 'truedaniyyel/truedaniyyel-blog',
 	},
 
 	singletons: {
@@ -67,10 +67,17 @@ export default config({
 			path: 'src/content/settings/',
 			format: { data: 'json' },
 			schema: {
-				title: fields.text({ label: 'Site Title' }),
-				description: fields.text({ label: 'Site Description', multiline: true }),
-				author: fields.text({ label: 'Default Author Name' }),
-				defaultImageAlt: fields.text({ label: 'Default OpenGraph Image Alt Text' }),
+				title: fields.text({ label: 'Site Title', validation: { isRequired: true } }),
+				description: fields.text({
+					label: 'Site Description',
+					multiline: true,
+					validation: { isRequired: true },
+				}),
+				author: fields.text({ label: 'Default Author Name', validation: { isRequired: true } }),
+				defaultImageAlt: fields.text({
+					label: 'Default OpenGraph Image Alt Text',
+					validation: { isRequired: true },
+				}),
 				scheduledPostMargin: fields.integer({
 					label: 'Scheduled Post Margin (minutes)',
 					description: 'Number of minutes before a scheduled post is considered visible.',

@@ -1,37 +1,94 @@
 ---
 export const prerender = false;
 
-import { server } from '../actions';
+import { actions } from 'astro:actions';
 
-const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const result = Astro.getActionResult(actions.contact);
 ---
 
 <html lang="en">
-	<head>
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-	</head>
 	<body class="prose mx-auto p-6">
 		<h1>Contact</h1>
 
-		<form method="POST" action={server.contact} class="grid gap-4">
-			<label>
-				Name
-				<input name="name" required class="input" />
-			</label>
+		{
+			result?.data?.ok ? (
+				<div
+					class="rounded-lg border border-green-400 bg-green-50 p-6 text-center text-green-800 dark:bg-green-950 dark:text-green-200"
+					role="status"
+					aria-live="polite"
+					aria-atomic="true"
+					tabindex="-1"
+					id="form-status"
+				>
+					<h2 class="text-2xl font-semibold">Thank You!</h2>
+					<p class="mt-2">Your message has been sent!</p>
+				</div>
+			) : (
+				<form method="POST" action={actions.contact} class="grid gap-4">
+					<label
+						class="absolute top-auto left-[-10000px] h-px w-px overflow-hidden"
+						aria-hidden="true"
+					>
+						Website
+						<input type="text" name="url" autocomplete="off" tabindex="-1" />
+					</label>
 
-			<label>
-				Email
-				<input type="email" name="email" required class="input" />
-			</label>
+					{result?.error && (
+						<div
+							class="mb-4 rounded-md border border-red-400 bg-red-50 p-4 text-center text-sm text-red-700 dark:border-red-500/50 dark:bg-red-950/20 dark:text-red-300"
+							role="alert"
+							aria-live="assertive"
+							aria-atomic="true"
+							tabindex="-1"
+							id="form-status"
+						>
+							<p class="font-semibold">Oops! Something went wrong.</p>
+							<p>
+								{result.error.code === 'BAD_REQUEST'
+									? 'We could not send your message. Please check the form and try again.'
+									: 'Something went wrong on our side. Please try again later.'}
+							</p>
+						</div>
+					)}
 
-			<label>
-				Message
-				<textarea name="message" required class="textarea"></textarea>
-			</label>
+					<div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+						<label>
+							Name
+							<input name="name" required maxlength="100" class="input" transition:persist />
+						</label>
 
-			<div class="cf-turnstile" data-sitekey={siteKey}></div>
+						<label>
+							Email
+							<input
+								type="email"
+								name="email"
+								required
+								maxlength="254"
+								class="input"
+								autocomplete="email"
+								autocapitalize="off"
+								spellcheck="false"
+								transition:persist
+							/>
+						</label>
+					</div>
 
-			<button type="submit" class="btn">Send</button>
-		</form>
+					<label>
+						Message
+						<textarea
+							name="message"
+							required
+							maxlength="5000"
+							class="textarea"
+							transition:persist
+						/>
+					</label>
+
+					<button type="submit" class="btn">
+						Send
+					</button>
+				</form>
+			)
+		}
 	</body>
 </html>

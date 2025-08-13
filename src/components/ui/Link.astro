@@ -1,0 +1,47 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const commonFontStyles = 'text-sm font-medium';
+const commonHoverStyles =
+	'hover:text-blue-500 active:text-blue-500 dark:hover:text-yellow-400 dark:active:text-yellow-400';
+const animatedUnderlineStyles =
+	"after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-current after:scale-x-0 after:origin-right after:transition-transform after:duration-250 after:ease-out hover:after:scale-x-100 hover:after:origin-left active:after:scale-x-100 active:after:origin-left group-hover:after:scale-x-100 group-hover:after:origin-left group-active:after:scale-x-100 group-active:after:origin-left";
+
+const link = cva(
+	"relative inline-block transition duration-250 ease-out before:content-[''] before:absolute before:inset-y-[-10px] before:inset-x-[-7px] active:scale-95",
+	{
+		variants: {
+			variant: {
+				default: `${commonFontStyles} underline underline-offset-4 ${commonHoverStyles}`,
+
+				'hover-reveal': `${commonFontStyles} text-blue-600 underline-offset-4 underline decoration-transparent hover:decoration-current dark:text-yellow-400`,
+
+				'animated-underline': `${commonHoverStyles} ${animatedUnderlineStyles}`,
+
+				plain: `${commonHoverStyles}`,
+			},
+		},
+		defaultVariants: {
+			variant: 'default',
+		},
+	},
+);
+
+interface Props extends VariantProps<typeof link>, HTMLAttributes<'a'> {}
+
+const { href, class: className, target, rel, variant, ...rest } = Astro.props;
+
+const isExternal =
+	href instanceof URL ||
+	(typeof href === 'string' && (href.startsWith('http://') || href.startsWith('https://')));
+
+const computedTarget = target ?? (isExternal ? '_blank' : undefined);
+const computedRel = rel ?? (isExternal ? 'noopener noreferrer' : undefined);
+
+const classes = link({ variant, className });
+---
+
+<a {href} target={computedTarget} rel={computedRel} class={classes} {...rest}>
+	<slot />
+</a>

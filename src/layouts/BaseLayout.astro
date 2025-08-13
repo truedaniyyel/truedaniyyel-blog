@@ -1,0 +1,188 @@
+---
+import '../styles/global.css';
+
+import { ClientRouter } from 'astro:transitions';
+import { join } from 'node:path';
+import Footer from '@components/layout/Footer.astro';
+import Header from '@components/layout/Header.astro';
+import ScrollToTop from '@components/ui/ScrollToTop.astro';
+import SkipLinkBtn from '@components/ui/SkipLinkBtn.astro';
+import { site } from '@utils/posts';
+import { AstroFont } from 'astro-font';
+import { SEO } from 'astro-seo';
+import { Schema } from 'astro-seo-schema';
+import { themeConfig } from 'theme.config';
+import type { ContentEntry } from 'types';
+
+interface Props {
+	entry?: ContentEntry;
+	title?: string;
+	description?: string;
+	scrollToTopThreshold?: number;
+}
+
+const { entry, scrollToTopThreshold } = Astro.props;
+
+const pageTitle = Astro.props.title ?? entry?.data.title ?? site.title;
+const pageDescription = Astro.props.description ?? entry?.data.description ?? site.description;
+
+const ogImageUrl = entry
+	? new URL(`/${entry.collection}/${entry.id}.webp`, Astro.site).href
+	: new URL('/og-image.webp', Astro.site).href;
+
+let ogImageAlt: string;
+if (entry && entry.collection === 'artworks') {
+	ogImageAlt = entry.data.projects[0]?.images[0]?.alt ?? `Open graph image for ${pageTitle}`;
+} else if (entry) {
+	ogImageAlt = entry?.data.image?.alt;
+} else {
+	ogImageAlt = `Open graph image for ${pageTitle}`;
+}
+
+const twitterHandle = site.socials.find((s) => s.label === 'Twitter')?.handle;
+const seoType = entry ? 'article' : 'website';
+---
+
+<html lang={themeConfig.language} class="scroll-smooth">
+	<head>
+		<SEO
+			charset="utf-8"
+			title={pageTitle}
+			description={pageDescription}
+			openGraph={{
+				basic: {
+					title: pageTitle,
+					type: seoType,
+					image: ogImageUrl,
+					url: Astro.url.href,
+				},
+				optional: {
+					siteName: site.title,
+					locale: themeConfig.locale,
+				},
+				image: {
+					alt: ogImageAlt,
+					width: 1200,
+					height: 630,
+					type: 'image/webp',
+				},
+			}}
+			twitter={{
+				creator: twitterHandle,
+				card: site.twitterCard,
+				title: pageTitle,
+				description: pageDescription,
+				image: ogImageUrl,
+				imageAlt: ogImageAlt,
+			}}
+			extend={{
+				link: [
+					{
+						rel: 'preconnect',
+						href: 'https://res.cloudinary.com',
+						crossorigin: '',
+					},
+					{ rel: 'icon', href: themeConfig.favicon },
+					{ rel: 'sitemap', href: '/sitemap-index.xml' },
+					{ rel: 'robots', href: '/robots.txt' },
+					{
+						rel: 'alternate',
+						type: 'application/rss+xml',
+						title: `${site.title} RSS Feed`,
+						href: themeConfig.rssFeedPath,
+					},
+				],
+				meta: [
+					{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+					{ name: 'generator', content: Astro.generator },
+				],
+			}}
+		/>
+		<Schema
+			item={{
+				'@context': 'https://schema.org',
+				'@type': seoType === 'article' ? 'BlogPosting' : 'WebSite',
+				name: site.title,
+				description: pageDescription,
+				url: Astro.url.href,
+				author: {
+					'@type': 'Person',
+					name: site.author,
+				},
+				...(seoType === 'article' && {
+					headline: pageTitle,
+					image: ogImageUrl,
+					publisher: {
+						'@type': 'Person',
+						name: site.author,
+					},
+					...(entry?.data.pubDatetime && {
+						datePublished: entry.data.pubDatetime.toISOString(),
+					}),
+					...(entry?.data.modDatetime && {
+						dateModified: entry.data.modDatetime.toISOString(),
+					}),
+				}),
+			}}
+		/>
+		<AstroFont
+			config={[
+				{
+					name: themeConfig.font.name,
+					src: [
+						{
+							style: 'normal',
+							weight: '100 900',
+							path: join(process.cwd(), 'public', themeConfig.font.paths.normal),
+						},
+						{
+							style: 'italic',
+							weight: '100 900',
+							path: join(process.cwd(), 'public', themeConfig.font.paths.italic),
+						},
+					],
+					preload: true,
+					display: 'swap',
+					selector: 'body',
+					fallback: 'sans-serif',
+				},
+			]}
+		/>
+
+		<script is:inline>
+			function applyTheme() {
+				try {
+					const stored = localStorage.getItem('theme');
+					const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+					const isDark = stored ? stored === 'dark' : prefersDark;
+					document.documentElement.classList.toggle('dark', isDark);
+				} catch (_) {}
+			}
+
+			applyTheme();
+
+			document.addEventListener('astro:after-swap', applyTheme);
+		</script>
+
+		<ClientRouter />
+	</head>
+	<body class="bg-white text-neutral-950 dark:bg-neutral-900 dark:text-neutral-50">
+		<SkipLinkBtn />
+
+		<Header />
+
+		<main id="main">
+			<slot />
+		</main>
+
+		<Footer />
+
+		<div
+			id="overlay"
+			class="pointer-events-none invisible fixed inset-0 z-40 bg-black/50 opacity-0 transition-all duration-500"
+		>
+		</div>
+
+		<ScrollToTop threshold={scrollToTopThreshold} />
+	</body>
+</html>
