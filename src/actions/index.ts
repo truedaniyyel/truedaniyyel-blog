@@ -6,6 +6,9 @@ import { Resend } from 'resend';
 
 const resend = new Resend(import.meta.env.RESEND_API_KEY);
 
+const KIT_FORM_ID = import.meta.env.KIT_FORM_ID;
+const KIT_API_KEY = import.meta.env.KIT_API_KEY;
+
 export const server = {
 	contact: defineAction({
 		accept: 'form',
@@ -13,13 +16,8 @@ export const server = {
 			name: z.string().min(1).max(100),
 			email: z.string().email().max(254),
 			message: z.string().min(1).max(5000),
-			url: z.string().optional().default(''), // honeypot
 		}),
-		handler: async ({ name, email, message, url }) => {
-			if (url.trim()) {
-				throw new ActionError({ code: 'BAD_REQUEST', message: 'Spam detected.' });
-			}
-
+		handler: async ({ name, email, message }) => {
 			const safeName = stripCtl(name);
 			const safeEmail = stripCtl(email);
 
@@ -66,6 +64,64 @@ export const server = {
 				throw new ActionError({
 					code: 'INTERNAL_SERVER_ERROR',
 					message: 'Email could not be sent.',
+				});
+			}
+		},
+	}),
+
+	newsletterSubscribe: defineAction({
+		accept: 'form',
+		input: z.object({
+			email: z.string().email().max(254),
+		}),
+		handler: async ({ email }) => {
+			if (!KIT_API_KEY || !KIT_FORM_ID) {
+				console.error('Kit env missing', {
+					hasKey: Boolean(KIT_API_KEY),
+					hasFormId: Boolean(KIT_FORM_ID),
+				});
+				throw new ActionError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message: 'Subscription failed.',
+				});
+			}
+
+			const email_address = stripCtl(email);
+
+			const headers = {
+				'Content-Type': 'application/json',
+				'X-Kit-Api-Key': KIT_API_KEY,
+			};
+
+			try {
+				const upsertRes = await fetch('https://api.kit.com/v4/subscribers', {
+					method: 'POST',
+					headers,
+					body: JSON.stringify({ email_address }),
+				});
+				const upsertJson = await upsertRes.json().catch(() => ({}));
+				if (!upsertRes.ok) {
+					console.error('Kit upsert failed', { status: upsertRes.status, upsertJson });
+					throw new ActionError({ code: 'BAD_REQUEST', message: 'Subscription failed.' });
+				}
+
+				const attachRes = await fetch(`https://api.kit.com/v4/forms/${KIT_FORM_ID}/subscribers`, {
+					method: 'POST',
+					headers,
+					body: JSON.stringify({ email_address }),
+				});
+				const attachJson = await attachRes.json().catch(() => ({}));
+				if (!attachRes.ok) {
+					console.error('Kit form attach failed', { status: attachRes.status, attachJson });
+					throw new ActionError({ code: 'BAD_REQUEST', message: 'Subscription failed.' });
+				}
+
+				return { ok: true };
+			} catch (error: any) {
+				console.error('Newsletter action error', error);
+				throw new ActionError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message: 'Subscription failed.',
 				});
 			}
 		},

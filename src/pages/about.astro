@@ -1,0 +1,18 @@
+---
+import Container from '@components/layout/Container.astro';
+import Link from '@components/ui/Link.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { about } from '@utils/posts';
+import { CldImage } from 'astro-cloudinary';
+
+// const { Content } = await render(about.content());
+
+const { Content } = await about.content();
+---
+
+<BaseLayout>
+	<Container class="mx-auto !max-w-4xl py-12">
+		<h1 class="mb-12 text-center text-4xl font-bold">About Me</h1>
+		<Content />
+	</Container>
+</BaseLayout>

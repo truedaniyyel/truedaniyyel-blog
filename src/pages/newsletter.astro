@@ -1,25 +1,75 @@
 ---
-import { server } from '../actions';
+export const prerender = false;
 
-const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+import { actions } from 'astro:actions';
+import Container from '@components/layout/Container.astro';
+import Button from '@components/ui/Button.astro';
+import InputField from '@components/ui/InputField.astro';
+import Link from '@components/ui/Link.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const result = Astro.getActionResult(actions.newsletterSubscribe);
 ---
 
-<html lang="en">
-	<head>
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-	</head>
-	<body class="prose mx-auto p-6">
-		<h1>Newsletter</h1>
+<BaseLayout>
+	<Container class="mx-auto !max-w-2xl py-12">
+		<h1 class="mb-12 text-center text-4xl font-bold">Newsletter</h1>
 
-		<form method="POST" action={server.newsletterSubscribe} class="grid gap-4">
-			<label>
-				Email
-				<input type="email" name="email" required class="input" />
-			</label>
+		{
+			result?.data?.ok ? (
+				<div
+					class="rounded-lg border border-green-400 bg-green-50 p-4 text-green-800"
+					role="status"
+					aria-live="polite"
+					aria-atomic="true"
+					tabindex="-1"
+				>
+					<p>Thanks! Check your inbox to confirm your subscription.</p>
+				</div>
+			) : (
+				<form method="POST" action={actions.newsletterSubscribe}>
+					{result?.error && (
+						<div
+							class="rounded-md border border-red-400 bg-red-50 p-3 text-sm text-red-700"
+							role="alert"
+							aria-live="assertive"
+							aria-atomic="true"
+							tabindex="-1"
+						>
+							<p>
+								{result.error.code === 'BAD_REQUEST'
+									? 'We could not subscribe this email. Please check and try again.'
+									: 'Something went wrong on our side. Please try again later.'}
+							</p>
+						</div>
+					)}
 
-			<div class="cf-turnstile" data-sitekey={siteKey}></div>
+					<div class="flex w-full flex-col gap-4 sm:flex-row sm:gap-2">
+						<InputField
+							type="email"
+							name="email"
+							placeholder="your@email.com"
+							required
+							maxlength="254"
+							autocomplete="email"
+							autocapitalize="off"
+							spellcheck="false"
+							transition:persist
+						/>
 
-			<button type="submit" class="btn">Subscribe</button>
-		</form>
-	</body>
-</html>
+						<Button type="submit">Subscribe</Button>
+					</div>
+
+					<div class="mt-4 flex justify-center">
+						<div class="max-w-xl text-center text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+							By subscribing, you agree to the
+							<Link href="/terms">Terms & Conditions</Link>
+							and
+							<Link href="/terms">Privacy Policy</Link>. You can unsubscribe at any time.
+						</div>
+					</div>
+				</form>
+			)
+		}
+	</Container>
+</BaseLayout>

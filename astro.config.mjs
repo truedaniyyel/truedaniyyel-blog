@@ -15,6 +15,10 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://truedaniyyel.com',
+
+	output: 'static',
+
 	vite: {
 		plugins: [
 			tailwindcss(),

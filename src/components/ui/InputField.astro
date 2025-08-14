@@ -1,0 +1,30 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const input = cva(
+	'min-w-0 w-full flex-auto rounded-lg border-0 bg-white px-3.5 py-2 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 transition-colors duration-200', // Added transition
+	{
+		variants: {
+			intent: {
+				default:
+					'ring-neutral-300 focus:ring-blue-500 dark:bg-neutral-700 dark:ring-neutral-700 dark:focus:ring-yellow-400',
+				error:
+					'ring-red-500 focus:ring-red-500 dark:bg-neutral-700 dark:ring-red-500 dark:focus:ring-red-500',
+			},
+		},
+		defaultVariants: {
+			intent: 'default',
+		},
+	},
+);
+
+interface Props extends HTMLAttributes<'input'>, VariantProps<typeof input> {
+	name: string;
+	placeholder: string;
+}
+
+const { name, placeholder, class: className, intent, ...rest } = Astro.props;
+---
+
+<input {name} {placeholder} {...rest} class:list={[input({ intent }), className]} />

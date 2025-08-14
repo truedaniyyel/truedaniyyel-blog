@@ -2,13 +2,19 @@
 export const prerender = false;
 
 import { actions } from 'astro:actions';
+import Container from '@components/layout/Container.astro';
+import Button from '@components/ui/Button.astro';
+import InputField from '@components/ui/InputField.astro';
+import Link from '@components/ui/Link.astro';
+import TextArea from '@components/ui/TextArea.astro';
+import BaseLayout from '@layouts/BaseLayout.astro';
 
 const result = Astro.getActionResult(actions.contact);
 ---
 
-<html lang="en">
-	<body class="prose mx-auto p-6">
-		<h1>Contact</h1>
+<BaseLayout>
+	<Container class="mx-auto !max-w-2xl py-12">
+		<h1 class="mb-12 text-center text-4xl font-bold">Contact</h1>
 
 		{
 			result?.data?.ok ? (
@@ -24,15 +30,7 @@ const result = Astro.getActionResult(actions.contact);
 					<p class="mt-2">Your message has been sent!</p>
 				</div>
 			) : (
-				<form method="POST" action={actions.contact} class="grid gap-4">
-					<label
-						class="absolute top-auto left-[-10000px] h-px w-px overflow-hidden"
-						aria-hidden="true"
-					>
-						Website
-						<input type="text" name="url" autocomplete="off" tabindex="-1" />
-					</label>
-
+				<form method="POST" action={actions.contact}>
 					{result?.error && (
 						<div
 							class="mb-4 rounded-md border border-red-400 bg-red-50 p-4 text-center text-sm text-red-700 dark:border-red-500/50 dark:bg-red-950/20 dark:text-red-300"
@@ -52,43 +50,73 @@ const result = Astro.getActionResult(actions.contact);
 					)}
 
 					<div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-						<label>
-							Name
-							<input name="name" required maxlength="100" class="input" transition:persist />
-						</label>
+						<div>
+							<label for="name" class="block text-sm leading-6 font-semibold">
+								Name
+							</label>
+							<div class="mt-2.5">
+								<InputField
+									name="name"
+									placeholder="Your Name"
+									required
+									maxlength="100"
+									transition:persist
+								/>
+							</div>
+						</div>
 
-						<label>
-							Email
-							<input
-								type="email"
-								name="email"
-								required
-								maxlength="254"
-								class="input"
-								autocomplete="email"
-								autocapitalize="off"
-								spellcheck="false"
-								transition:persist
-							/>
-						</label>
+						<div>
+							<label for="email" class="block text-sm leading-6 font-semibold">
+								Email
+							</label>
+							<div class="mt-2.5">
+								<InputField
+									type="email"
+									name="email"
+									placeholder="your@email.com"
+									required
+									maxlength="254"
+									autocomplete="email"
+									autocapitalize="off"
+									spellcheck="false"
+									transition:persist
+								/>
+							</div>
+						</div>
 					</div>
 
-					<label>
-						Message
-						<textarea
-							name="message"
-							required
-							maxlength="5000"
-							class="textarea"
-							transition:persist
-						/>
-					</label>
+					<div class="mt-8">
+						<label for="message" class="block text-sm leading-6 font-semibold">
+							Message
+						</label>
+						<div class="mt-2.5">
+							<TextArea
+								name="message"
+								required
+								maxlength="5000"
+								rows="4"
+								placeholder="How can I help?"
+								transition:persist
+							/>
+						</div>
+					</div>
 
-					<button type="submit" class="btn">
-						Send
-					</button>
+					<div class="mt-2 flex justify-center">
+						<div class="max-w-xl text-center text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+							All the fields are required. By sending the form you agree to the
+							<Link href="/terms">Terms & Conditions</Link>
+							and
+							<Link href="/terms">Privacy Policy</Link>.
+						</div>
+					</div>
+
+					<div class="mt-8">
+						<Button type="submit" class="w-full">
+							Send
+						</Button>
+					</div>
 				</form>
 			)
 		}
-	</body>
-</html>
+	</Container>
+</BaseLayout>

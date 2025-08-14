@@ -109,6 +109,7 @@ export default config({
 				),
 			},
 		}),
+
 		navigation: singleton({
 			label: 'Navigation Menus',
 			path: 'src/content/navigation/',
@@ -143,6 +144,20 @@ export default config({
 						itemLabel: (props) => props.fields.title.value,
 					},
 				),
+			},
+		}),
+
+		about: singleton({
+			label: 'About Me',
+			path: 'src/content/about/',
+			entryLayout: 'content',
+			format: {
+				contentField: 'content',
+			},
+			schema: {
+				content: fields.mdx({
+					label: 'Content',
+				}),
 			},
 		}),
 	},
