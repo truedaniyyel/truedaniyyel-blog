@@ -1,16 +1,17 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Container from '@components/layout/Container.astro';
+import Link from '@components/ui/Link.astro';
 import BaseLayout from '@layouts/BaseLayout.astro';
+import { CldImage } from 'astro-cloudinary';
 
 const [about] = await getCollection('about');
-
 const { Content } = await render(about);
 ---
 
 <BaseLayout>
 	<Container class="mx-auto !max-w-4xl py-12">
 		<h1 class="mb-12 text-center text-4xl font-bold">About Me</h1>
-		<Content />
+		<Content components={{ Link, CldImage }} />
 	</Container>
 </BaseLayout>

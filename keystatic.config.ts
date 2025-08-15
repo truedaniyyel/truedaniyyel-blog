@@ -1,4 +1,6 @@
 import { collection, config, fields, singleton } from '@keystatic/core';
+import { block, mark } from '@keystatic/core/content-components';
+import * as React from 'react';
 
 const baseSchema = () => ({
 	draft: fields.checkbox({ label: 'Draft', defaultValue: false }),
@@ -157,6 +159,35 @@ export default config({
 			schema: {
 				content: fields.mdx({
 					label: 'Content',
+					components: {
+						CldImage: block({
+							label: 'Cloudinary Image',
+							schema: {
+								src: fields.url({ label: 'Image URL', validation: { isRequired: true } }),
+								alt: fields.text({ label: 'Alt', validation: { isRequired: true } }),
+								width: fields.integer({ label: 'Width', validation: { isRequired: true } }),
+								height: fields.integer({ label: 'Height', validation: { isRequired: true } }),
+								sizes: fields.text({
+									label: 'Sizes',
+									defaultValue: '(max-width: 768px) 100vw, 50vw',
+								}),
+								class: fields.text({ label: 'Class', defaultValue: '' }), // Astro components use `class`
+							},
+						}),
+						Link: mark({
+							icon: React.createElement('span', null, '🔗'),
+							label: 'Link',
+							schema: {
+								href: fields.url({ label: 'href', validation: { isRequired: true } }),
+								variant: fields.select({
+									label: 'Variant',
+									options: [{ label: 'hover-reveal', value: 'hover-reveal' }],
+									defaultValue: 'hover-reveal',
+								}),
+								class: fields.text({ label: 'class', defaultValue: '!text-base' }),
+							},
+						}),
+					},
 				}),
 			},
 		}),
