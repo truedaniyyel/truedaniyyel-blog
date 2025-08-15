@@ -11,10 +11,9 @@ async function required<T>(p: Promise<T | null>, name: string): Promise<T> {
 	return v;
 }
 
-export const [site, navigation, about] = await Promise.all([
+export const [site, navigation] = await Promise.all([
 	required(reader.singletons.settings.read(), 'settings'),
 	required(reader.singletons.navigation.read(), 'navigation'),
-	required(reader.singletons.about.read(), 'about'),
 ]);
 
 const [blogPosts, projectPosts, artworkPosts] = await Promise.all([

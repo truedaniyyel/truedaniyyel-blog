@@ -1,13 +1,11 @@
 ---
+import { getCollection, render } from 'astro:content';
 import Container from '@components/layout/Container.astro';
-import Link from '@components/ui/Link.astro';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import { about } from '@utils/posts';
-import { CldImage } from 'astro-cloudinary';
 
-// const { Content } = await render(about.content());
+const [about] = await getCollection('about');
 
-const { Content } = await about.content();
+const { Content } = await render(about);
 ---
 
 <BaseLayout>

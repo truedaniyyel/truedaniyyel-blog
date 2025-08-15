@@ -140,6 +140,11 @@ const navigation = defineCollection({
 	}),
 });
 
+const about = defineCollection({
+	loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/about' }),
+	schema: z.object({}),
+});
+
 export const collections = {
 	blog,
 	projects,
@@ -149,4 +154,5 @@ export const collections = {
 	licenses,
 	settings,
 	navigation,
+	about,
 };
